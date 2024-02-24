@@ -1,0 +1,62 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+header Nhắn tin
+title Luồng nhắn tin với khách hàng
+autonumber
+actor "Seller" as seller
+participant "Client" as client
+participant "Backend" as be
+database DB
+seller -> client++: Vào giao diện seller
+seller -> client: Bấm vào phần chat
+client -> be++: Gọi API lấy danh sách hội thoại
+be -> DB++: Lấy thông tin các hội thoại
+DB --> be: Trả về thông tin
+alt Thông tin hợp lệ
+be --> client: Trả về thông tin hội thoại
+client --> seller: Trả về danh sách các hội thoại
+seller -> client: Chọn 1 hội thoại
+client --> seller: Trả về giao diện hội thoại cùng với lịch sử tin nhắn
+seller -> client: Nhập tin nhắn và bấm gửi
+client -> be: Gọi API gửi tin nhắn
+be -> DB++: Lưu thông tin tin nhắn
+DB --> be: Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin tin nhắn
+client --> seller: Trả về lịch sử tin nhắn mới
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> be: Trả về thông báo gửi tin nhắn thất bại
+end
+else Thông tin không hợp lệ
+be --> client: Trả về lỗi
+client --> seller: Trả về không tìm thấy hội thoại
+end
+@enduml

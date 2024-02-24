@@ -1,0 +1,102 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+header Quản lý order
+title Luồng tạo order của Customer
+autonumber
+actor "customer" as customer
+participant "Client" as client
+participant "Backend" as be
+database DB
+customer -> client++: Vào giao diện customer
+customer -> client: Vào giỏ hàng
+client -> be++: Gọi API lấy danh sách giỏ hàng
+be -> DB++: Lấy thông tin giỏ hàng
+DB --> be: Trả về kết quả
+DB--
+alt kết quả hợp lệ
+be --> client: Trả về kết quả
+client --> customer: Trả về danh sách giỏ hàng
+customer -> client: Chọn 1 giỏ hàng bấm nút thanh toán
+client --> customer: Hiển thị giao diện tạo hóa đơn
+opt chọn thông tin người nhận
+end
+customer -> client: Điền thông tin địa chỉ người nhận
+opt chọn voucher shop
+customer -> client: Chọn voucher
+client -> be: Gọi API lấy ra voucher Shop
+be -> DB++: Lấy ra thông tin voucher
+DB -->be: Trả về kết quả
+DB--
+alt kết quả hợp lệ
+be --> client: Trả về danh sách voucher
+client --> customer: Trả về danh sách các voucher
+customer -->client: Chọn một voucher và bấm áp dụng
+client --> customer: Trả về mã code voucher và giảm tiền
+else kết quả không hợp lệ
+be --> client: Trả về danh sách lỗi
+client --> customer: Trả về không thấy voucher
+end
+end
+opt chọn voucher sàn thương mại
+customer -> client: Chọn voucher
+client -> be: Gọi API lấy ra voucher sàn
+be -> DB++: Lấy ra thông tin voucher
+DB -->be: Trả về kết quả
+DB--
+alt kết quả hợp lệ
+be --> client: Trả về danh sách voucher
+client --> customer: Trả về danh sách các voucher
+customer -->client: Chọn một voucher và bấm áp dụng
+client --> customer: Trả về mã code voucher và giảm tiền
+else kết quả không hợp lệ
+be --> client: Trả về danh sách lỗi
+client --> customer: Trả về không thấy voucher
+end
+end
+customer -> client: Bấm nút tạo hóa đơn
+alt Form hợp lệ
+client -> be: Gọi API tạo hóa đơn
+be -> DB++: Lưu thông tin hóa đơn
+DB-->be: Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin hóa đơn
+client --> customer: Trả về thông báo tạo đơn thành công
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> customer: Trả về thông báo tạo đơn thất bại
+end
+else Form không hợp lệ
+client --> customer: Trả về tạo thất bại
+end
+else kết quả không hợp lệ
+client --> customer: Trả về không tìm thấy giỏ hàng
+end
+
+@enduml

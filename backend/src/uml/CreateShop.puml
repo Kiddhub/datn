@@ -1,0 +1,62 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý shop
+title Luồng tạo shop của seller
+autonumber
+
+actor "Seller" as seller
+participant "Client" as client
+participant "Backend" as be
+database DB
+seller -> client++: Vào giao diện seller
+client -> be++: Gọi đến API lấy thông tin shop
+be -> DB++: Lấy thông tin của shop
+DB --> be: Trả về kết quả
+DB--
+alt Thông tin shop hợp lệ
+be --> client: Trả về kết quả
+client --> seller: Trả về màn hình trang chủ seller
+else Thông tin shop không hợp lệ
+be --> client: trả về kết quả
+client --> seller: Trả về màn hình tạo shop
+seller -> client: Điền form tạo shop, bấm nút Create
+alt form hợp lệ
+client -> be: Gọi API tạo shop
+be -> DB++: lưu thông tin shop
+DB --> be: Trả về kết quả
+DB--
+be --> client: Trả về thông tin shop
+client --> seller: Trả về màn hình trang chủ seller
+else form không hợp lệ
+client --> seller: Trả về lỗi không hợp lệ
+end
+
+end
+@enduml

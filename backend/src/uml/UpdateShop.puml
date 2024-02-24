@@ -1,0 +1,62 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý shop
+title Luồng cập nhật shop của seller
+autonumber
+
+actor "Seller" as seller
+participant "Client" as client
+participant "Backend" as be
+database DB
+seller -> client++: Vào giao diện seller
+client -> be++: Ấn vào thông tin Shop
+be -> DB++: Lấy thông tin của shop
+DB --> be: Trả về kết quả
+DB--
+alt Thông tin shop hợp lệ
+be --> client: Trả về kết quả
+client --> seller: Trả về màn hình thông tin của Shop
+seller -> client: Thay đổi thông tin và Bấm lưu
+alt form hợp lệ
+client -> be: Gọi API sửa thông tin shop
+be -> DB++: Lưu thông tin shop
+DB --> be: Trả về kết quả
+DB--
+alt kết quả hợp lệ
+be --> client: Trả về kết quả
+client --> seller: Hiển thị popup cập nhật thành công
+else kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> seller: Hiển thị popup cập nhật thất bại
+end
+else Thông tin Shop không hợp lệ
+client --> seller: Trả về lỗi
+end
+@enduml

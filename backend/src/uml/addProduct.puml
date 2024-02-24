@@ -1,0 +1,58 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý sản phẩm
+title Luồng thêm sản phẩm của seller
+autonumber
+
+actor "Seller" as seller
+participant "Client" as client
+participant "Backend" as be
+database DB
+seller -> client++: Bấm vào nút thêm mới sản phẩm
+client --> seller: Hiển thị giao diện thêm sản phẩm
+seller -> client :Nhập sản phẩm,bấm nút thêm
+alt Form hợp lệ
+client -> be++: gọi API thêm sản phẩm
+be -> DB++: Lưu thông tin sản phẩm
+DB --> be: Trả kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về kết quả sản phẩm
+client --> seller: Trả về tạo sản phẩm thành công
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> seller: Trả về thông báo tạo thất bại
+end
+else Form không hợp lệ
+client --> seller: Trả về thông báo lỗi form
+end
+
+
+@enduml

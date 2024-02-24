@@ -1,0 +1,71 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý sản phẩm
+title Luồng báo cáo sản phẩm customer
+autonumber
+
+actor "Customer" as customer
+participant "Client" as client
+participant "Backend" as be
+database DB
+customer -> client++: Vào giao diện customer
+customer -> client: Chọn 1 sản phẩm muốn báo cáo
+client -> be++: Gọi API lấy thông tin sản phẩm
+be -> DB++: Lấy thông tin sản phẩm
+DB --> be:Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin sản phẩm
+client --> customer: Trả về trang thông tin sản phẩm
+customer -> client: Ấn nút báo cáo sản phẩm
+client --> customer: Trả về bảng chọn loại báo cáo
+customer -> client: Chọn 1 loại báo cáo,điền lời nhắn và bấm gửi
+alt form hợp lệ
+client -> be: Gọi API tạo báo cáo
+be -> DB++: Lưu thông tin đơn báo cáo
+DB --> be: Trả về kết quả
+DB--
+alt kết quả hợp lệ
+be --> client: Trả về thong tin đơn báo cáo
+client --> customer: Trả về thông báo cảm ơn bạn đã báo cáo
+else kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> customer: Trả về thông báo tạo thất bại
+end
+else form không hợp lệ
+client --> customer: Trả về thông báo lỗi
+end
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> customer: Trả về không tìm thấy sản phẩm
+end
+
+
+@enduml

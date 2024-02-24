@@ -1,0 +1,53 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+header Quản lý voucher
+title Luồng duyệt voucher của Admin
+autonumber
+actor "Admin" as admin
+participant "Client" as client
+participant "Backend" as be
+database DB
+admin -> client++: Vào giao diện admin
+admin -> client: Ấn vào danh sách voucher shop
+admin -> client: Chọn voucher cần duyệt và bấm duyệt
+client --> be++: Gọi API duyệt voucher
+be -> DB++: Lấy thông tin voucher
+DB --> be: Trả về kết quả
+DB--
+alt nếu thông tin hợp lệ
+be -> DB++ : Lưu thông tin voucher
+DB --> be: Trả về kết quả
+DB--
+be --> client: Trả về thông tin
+client --> admin: Trả về thông báo duyệt thành công
+else nếu thông tin không hợp lệ
+be --> client: Trả về lỗi không thấy voucher
+client --> admin: Trả về popup duyệt thất bại
+end
+@enduml

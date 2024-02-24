@@ -1,0 +1,61 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+header Quản lý sale
+title Luồng đăng ký sản phẩm vào sale
+autonumber
+actor "Seller" as seller
+participant "Client" as client
+participant "Backend" as be
+database DB
+seller -> client++: Vào giao diện seller
+seller -> client: Chọn sale
+client -> be++: Gọi API lấy danh sách sale
+be -> DB++: Lấy ra thông tin sales
+DB --> be: Trả về thông tin
+alt Thông tin hợp lệ
+be --> client: Trả về thông tin sales
+client --> seller: Trả ra danh sách các sales
+seller -> client: Bấm vào nút thêm sản phẩm
+seller -> client: Chọn các sản phẩm cần thêm và bấm nút đăng ký
+client -> be: Gọi API đăng ký sản phẩm
+be -> DB++: Lưu các sản phẩm đăng ký
+DB --> be: Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be-->client: Trả về thông tin sản phẩm đăng ký
+client-> seller: Trả về thông báo đăng ký thành công
+else Kết quả không hợp lệ
+be-->client: Trả về lỗi
+client-> seller: Trả về thông báo đăng ký thất bại
+end
+else Thông tin không hợp lệ
+be-->client: Trả về lỗi
+client-> seller: Trả về không tìm thấy sale
+end
+@enduml

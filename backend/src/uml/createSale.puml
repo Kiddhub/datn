@@ -1,0 +1,57 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+header Quản lý sale
+title Luồng tạo Sale của Admin
+autonumber
+actor "Admin" as admin
+participant "Client" as client
+participant "Backend" as be
+database DB
+admin -> client++: Vào giao diện admin
+admin -> client: Chọn nút tạo Sale
+client --> admin: Trả về giao diện tạo Sale
+admin -> client: Điền form và bấm nút tạo
+alt form hợp lệ
+client -> be++: gọi API tạo sale
+be -> DB++: lưu thông tin sale
+DB --> be: Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin chương trình
+client --> admin: Trả về thông báo tạo thành công
+else Kết quả không hợp lệ
+be --> client: Trả về mã lỗi thông tin lỗi
+client --> admin: Trả về thông báo tạo thất bại
+end
+be --> client: Trả về thông tin sale
+client --> admin: Trả về popup tạo sale thành công
+else form không hợp lệ
+client --> admin: Trả về thông báo lỗi
+end
+@enduml

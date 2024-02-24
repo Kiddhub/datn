@@ -1,0 +1,63 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý hóa đơn
+title Luồng cập nhật trạng thái của hóa đơn
+autonumber
+actor "Seller" as seller
+participant "Client" as client
+participant "Backend" as be
+database DB
+seller -> client++: Vào giao diện seller
+seller -> client: Vào phần hóa đơn
+client -> be++: Gọi API lấy danh sách hóa đơn
+be -> DB++: Lấy danh sách hóa đơn
+DB --> be: Trả về thông tin
+DB--
+alt Thông tin hợp lệ
+be --> client: Trả về thông tin các hóa đơn
+client --> seller: Trả về danh sách hóa đơn
+seller -> client: Bấm nút cập nhật trạng thái hóa đơn
+client -> be: Gọi API cập nhật hóa đơn
+be -> DB++: Lưu thông tin hóa đơn
+DB --> be: Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin hóa đơn
+client --> seller: Trả về thông báo cập nhật thành công
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> seller: Trả về thông báo cập nhật thất bại
+end
+else Thông tin không hợp lệ
+be --> client:Trả về lỗi
+client --> seller: Trả về không tìm thấy hóa đơn
+end
+
+
+@enduml

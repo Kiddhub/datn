@@ -1,0 +1,61 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý sản phẩm
+title Luồng duyệt sản phẩm của admin
+autonumber
+actor "Admin" as admin
+participant "Client" as client
+participant "Backend" as be
+database DB
+admin -> client++: Vào giao diện admin
+admin -> client: Bấm vào danh sách sản phẩm
+client -> be++: Gọi API lấy danh sách sản phẩm
+be -> DB++: Lấy ra thông tin sản phẩm
+DB--> be: Trả về thông tin
+DB--
+alt Thông tin hợp lệ
+be --> client: Trả về thông tin
+client --> admin: Trả về danh sách các sản phẩm
+admin -> client: Bấm vào nút duyệt sản phẩm
+client -> be: Gọi API duyệt sản phẩm
+be -> DB++: Lưu sản phẩm
+DB --> be: Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin sản phẩm
+client --> admin: Trả về popup duyệt thành công
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> admin: Trả về popup duyệt thất bại
+end
+else Thông tin không hợp lệ
+be --> client: Trả về lỗi
+client --> admin: Trả về không tìm thấy sản phẩm
+end
+@enduml

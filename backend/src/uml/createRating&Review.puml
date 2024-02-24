@@ -1,0 +1,70 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Quản lý sản phẩm
+title Luồng tạo đánh giá sản phẩm
+autonumber
+actor "Customer" as customer
+participant "Client" as client
+participant "Backend" as be
+database DB
+customer -> client++: Vào giao diện customer
+customer -> client: Chọn hóa đơn đã nhận hàng
+client -> be++: Gọi API danh sách hóa đơn
+be -> DB++: Lấy thông tin hóa đơn
+DB --> be:Trả về kết quả
+DB--
+alt Kết quả hợp lệ
+be --> client: Trả về thông tin hóa đơn
+client --> customer: Trả về danh sách hóa đơn
+customer -> client: Ấn nút đánh giá
+client --> customer: Trả về giao diện đánh giá
+customer -> client: Chọn điểm và điền lời nhắn và bấm gửi
+alt form hợp lệ
+client -> be: Gọi API tạo đánh giá
+be -> DB++: Lưu thông tin đánh giá
+DB --> be: Trả về kết quả
+DB--
+alt kết quả hợp lệ
+be --> client: Trả về thong tin đơn đánh giá
+client --> customer: Trả về thông báo cảm ơn bạn đã đánh giá
+else kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> customer: Trả về thông báo tạo thất bại
+end
+else form không hợp lệ
+client --> customer: Trả về thông báo lỗi
+end
+else Kết quả không hợp lệ
+be --> client: Trả về lỗi
+client --> customer: Trả về không tìm thấy hóa đơn
+end
+
+
+@enduml

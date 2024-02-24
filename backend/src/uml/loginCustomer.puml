@@ -1,0 +1,59 @@
+@startuml
+skinparam shadowing false
+skinparam responseMessageBelowArrow false
+skinparam DefaultFontColor #222
+skinparam TitleFontSize 25
+skinparam NoteBorderColor #teal
+skinparam NoteBackgroundColor #powderblue
+skinparam NoteFontColor #444
+skinparam DatabaseBorderColor #teal
+skinparam DatabaseBackgroundColor #bisque
+
+skinparam sequence {
+  ParticipantBorderThickness 1
+  ParticipantBorderColor #teal
+  ParticipantBackgroundColor #teal
+  ParticipantFontColor #white
+  ParticipantFontSize 14
+  ParticipantFontStyle bold
+  LifeLineBorderColor #teal
+  LifeLineBackgroundColor #aliceblue
+  ArrowColor #teal
+  ActorBorderColor #teal
+  GroupBorderThickness 1
+  GroupBorderColor #teal
+  GroupHeaderFontColor #white
+  GroupBackgroundColor #teal
+  GroupFontColor #teal
+}
+
+header Đăng nhập
+title Luồng đăng nhập
+autonumber
+
+actor "User" as user
+participant "Client" as client
+participant "Backend" as be
+database DB
+
+
+user -> client++: Bấm vào nút đăng nhập trên màn hình
+client --> user: Hiển thị giao diện màn hình đăng nhập
+user -> client: Điền thông tin email, mật khẩu và bấm nút đăng nhập
+alt form hợp lệ
+client ->be++: Gọi API đăng nhập
+be -> DB++: Lấy dữ liệu thông tin đăng nhập
+DB --> be: Trả kết quả
+DB--
+alt Dữ liệu hợp lệ
+be --> client: Trả về jwt token
+client --> user: Hiển thị ra màn hình trang chủ
+else Dữ liệu không hợp lệ
+be --> client: Trả về lỗi
+client --> user: Hiển thị ra thông báo lỗi
+end
+else form không hợp lệ
+client --> user: Hiển thị thông báo lỗi
+end
+
+@enduml
